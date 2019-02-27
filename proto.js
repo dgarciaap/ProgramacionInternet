@@ -9,3 +9,36 @@ Person.prototype.greet = function() {
 
 var john = new Person('John','Doe');
 john.greet();
+
+//pass by value
+function change(b) {
+    b = 2;
+}
+
+var a = 1;
+change(a);
+console.log(a);
+
+//pass by reference
+function changeObj(d) {
+    d.prop1 = function() {};
+    d.prop2 = {};
+}
+
+var c = {};
+c.prop1 = {};
+changeObj(c);
+console.log(c);
+
+//scope: where in code u have access to a particular function
+//invocar inmediatamente una function expression
+
+var firstname = 'Jane';
+
+(function(lastname) {
+    var firstname = 'John';
+    console.log(firstname);
+    console.log(lastname)
+}('Doe')); //parentésis invoca inmediatamente
+
+console.log(firstname);
