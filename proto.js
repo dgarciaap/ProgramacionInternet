@@ -31,7 +31,7 @@ changeObj(c);
 console.log(c);
 
 //scope: where in code u have access to a particular function
-//invocar inmediatamente una function expression
+//invocar inmediatamente una function expression (IIFE)
 
 var firstname = 'Jane';
 
