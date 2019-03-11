@@ -1,49 +1,56 @@
-//object properties and methods
-var obj = {
-    greet: 'Hello' //key and value
+var person = {
+    firstname: '',
+    lastname: '',
+    greet: function() {
+        return this.firstname + ' ' + this.lastname;
+    }
 }
 
-console.log(obj.greet);
-console.log(obj['greet']);//Acceder a la propiedad de un obj mediante su índice
-var prop = 'greet';
-console.log(obj[prop]);
+var john = Object.create(person);
+john.firstname = 'John';//overwrite properties
+john.lastname = 'Doe';
 
-//functions and arrays
-var arr = [];
+var jane = Object.create(person);
+jane.firstname = 'Jane';//overwrite properties
+jane.lastname = 'Doe';
 
-arr.push(function () {
-    console.log('Hello world 1');
-});
-arr.push(function () {
-    console.log('Hello world 2');
-});
-arr.push(function () {
-    console.log('Hello world 3');
-});
+console.log(john.greet());
+console.log(jane.greet());//Llamar propiedad greet
 
-arr.forEach(function(item) { //invoca a cada func dentro del array
-    item();
-});
+///////////////////////////////////
 
-//------------------------------------------------------------
+//Objeto hereda de Events
+var EventEmitter = require('events');
+var util = require('util');
 
-//COMO SE EXPORTA EL CONSTRUCTOR SE CREA NUEVA INSTANCIA (si importas emitter.js)
-var Emitter = require('events'); //modulo de JS on and emit already exist
-var eventConfig = require('./config').events;
+function Greetr() {
+    this.greeting = 'Hello';
+}
 
-var emtr = new Emitter();
+util.inherits(Greetr, EventEmitter);
 
-//las metes al array 'greet' is the type
-emtr.on(eventConfig.GREET, function() { //Acceder a la propiedad del object literal
-    console.log('Somewhere, someone said hi');
-});
+Greetr.prototype.greet = function(data) {
+    console.log(this.greeting + ': ' + data);//Primero imprime Hello world y luego emite greet que puede ser definido
+    this.emit('greet', data);
+}
 
-//magic string: a string that has a special meaning in our code
-emtr.on('greet', function() { //Si en 'greet' ocurre typo valió, por eso eventConfig.GREET
-    console.log('A greeting ocurred!');
+var greeter1 = new Greetr();
+
+greeter1.on('greet', function(data) { //on está definido en 'events'
+    console.log('Someone greeted' + ': ' + data);//llama primero a la cadena de prototipos, that's why imprime Hello world y luego emite greet
 });
 
-console.log('Hi!');
-emtr.emit('greet'); //invoca a los de tipo greet
+greeter1.greet('Tony');
 
+//CALL APPLY//////////////////////
 
+var obj = {
+    name: 'John Doe',
+    greet: function(param) {
+        console.log(`Hello ${this.name}`);
+    }
+}
+
+obj.greet();
+obj.greet.call({name: 'Jane Doe'});//dif entre call y apply cómo se pasan los param
+obj.greet.apply({name: 'Jane Doe'});//Se modifica a lo que this.name apunta
