@@ -1,33 +1,13 @@
-var person = {
-    firstname: '',
-    lastname: '',
-    greet: function() {
-        return this.firstname + ' ' + this.lastname;
-    }
-}
-
-var john = Object.create(person);
-john.firstname = 'John';//overwrite properties
-john.lastname = 'Doe';
-
-var jane = Object.create(person);
-jane.firstname = 'Jane';//overwrite properties
-jane.lastname = 'Doe';
-
-console.log(john.greet());
-console.log(jane.greet());//Llamar propiedad greet
-
-///////////////////////////////////
-
 //Objeto hereda de Events
 var EventEmitter = require('events');
 var util = require('util');
 
 function Greetr() {
+    EventEmitter.call(this); //Super constructor (passed by reference)
     this.greeting = 'Hello';
 }
 
-util.inherits(Greetr, EventEmitter);
+util.inherits(Greetr, EventEmitter);//Hereda en forma incompleta (usar super constructor)
 
 Greetr.prototype.greet = function(data) {
     console.log(this.greeting + ': ' + data);//Primero imprime Hello world y luego emite greet que puede ser definido
@@ -42,15 +22,25 @@ greeter1.on('greet', function(data) { //on está definido en 'events'
 
 greeter1.greet('Tony');
 
-//CALL APPLY//////////////////////
+/*Ejemplo ll*/
 
-var obj = {
-    name: 'John Doe',
-    greet: function(param) {
-        console.log(`Hello ${this.name}`);
-    }
+var util = require('util');
+
+function Person() {
+    this.firstname = 'John';
+    this.lastname = 'Doe';
 }
 
-obj.greet();
-obj.greet.call({name: 'Jane Doe'});//dif entre call y apply cómo se pasan los param
-obj.greet.apply({name: 'Jane Doe'});//Se modifica a lo que this.name apunta
+Person.prototype.greet = function() {
+    console.log('Hello ' + this.firstname + ' ' + this.lastname);
+}
+
+function Policeman() {
+    Person.call(this); //Super constructor
+    this.badgenumber = '1234';
+}
+
+util.inherits(Policeman, Person);//incompleto (undefined)
+var officer = new Policeman();
+officer.greet();
+
