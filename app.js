@@ -2,13 +2,24 @@ var http = require('http');
 var fs = require('fs');
 
 http.createServer(function(req, res) { //request and response
+    if(req.url === '/'){
+        fs.createReadStream(__dirname + '/index.html').pipe(res);
+    }
     
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    var html = fs.readFileSync(__dirname + '/index.html','utf8');//utf8 formato en que me regresa los datos (string)
-    var message = "Hello world...";
-    html = html.replace('{Message}', message);//Busca string {Message} y reemplaza
-    res.end(html);
+    else if(req.url === '/api'){
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        var obj = {
+        firstname: 'John',
+        lastname: 'Doe'
+        };
+        res.end(JSON.stringify(obj));//JSON key value pairs
+    }
+    else {
+        res.writeHead(404);
+        res.end();
+    }
 
 }).listen(1337, '127.0.0.1');//port
 
-//template: text designed to be the basis for final text {Message} at index.html
+//serialize: translating an object into a format that can be stored or transferred
+//routing: mapping http request to content
