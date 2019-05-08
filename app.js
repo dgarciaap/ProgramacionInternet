@@ -1,22 +1,32 @@
-var express = require('express');
-var app = express();
+var request = require('request');
 
-//Environmente variables: global variables specific to the environment (server) our code is living in
-var port = process.env.PORT || 3000; //asigna el 3000 con || sólo si está disponible
-
-//http method: specifies the type of action the request wishes to make (verbs: GET, POST, DELETE)
-app.get('/', function(req, res) {
-    res.send('<html><head><body><h1>Hello world!</h1></body></head></html>');
+request("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&format=json", function (error, response, body) {
+  //JSON para convertir body a un objeto
+  let info = JSON.parse(body);
+    //Para acceder a propiedad de object [property] || object.property
+    let lati = info[0].lat;
+    let lngi = info[0].lon;
+    console.log('Lat: ' + lati + '\n' + 'long: ' + lngi);
+    //var celsiusToFahrenheit = require('celsius-to-fahrenheit');
+request(`https://api.darksky.net/forecast/366bf5ba25d241ff04fb0c781f5c1c92/${lati},${lngi}`, function (error, response, body) {
+ /* console.log('error:', error); // Print the error if one occurred
+  console.log('statusCode:', response && response.statusCode); */// Print the response status code if a response was received
+  //JSON para convertir body a un objeto
+  let info = JSON.parse(body);
+    //Para acceder a propiedad de object [property] || object.property
+    //info = (celsiusToFahrenheit(info.currently.temperature)).toFixed(4);
+  console.log(`La temperatura es de ${info.currently.temperature} F°`); // Print the HTML for the Google homepage.
 });
+    var options = { method: 'GET',
+    url: 'https://api.openuv.io/api/v1/uv',
+    qs: { lat: `${lati}`, lng: `${lngi}`},
+    headers: 
+    { 'content-type': 'application/json',
+        'x-access-token': 'f9936e83b61fb156275253e5f276fc50' } }
 
-//agregar ruta de parametros
-app.get('/person/:id', function(req, res) {
-    res.send('<html><head><body><h1>Person: ' + req.params.id + '</h1></body></head></html>');
+        request(options, function (error, response, body) {
+            if (error) throw new Error(error);
+            let uv = JSON.parse(body);
+            console.log(uv);
+          });
 });
-
-//Express ya tiene json incluido. Pedir objeto
-app.get('/api', function(req, res) {
-    res.json({firstname: 'John', lastname: 'Doe'});
-});
-
-app.listen(port); //Create Server, http port
