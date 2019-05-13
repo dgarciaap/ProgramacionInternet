@@ -1,6 +1,79 @@
 var request = require('request');
 
 request("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&format=json", function (error, response, body) {
+    p1 = new Promise(
+    function(resolve, reject) {
+      if(body) {
+        let info = JSON.parse(data);
+        let lati = info[0].lat;
+        let lngi = info[0].lon;
+        resolve(lati,lngi);
+      } else {
+        reject(err);
+      }
+    }).then(function(coordenadas) {
+      console.log('Lat: ' + coordenadas[0] + '\n' + 'long: ' + coordenadas[1]);
+      request(`https://api.darksky.net/forecast/366bf5ba25d241ff04fb0c781f5c1c92/${coordenadas[0]},${coordenadas[1]}`, function (error, response, body) {
+          p2 = new Promise(
+          function(resolve, reject) {
+            if(body) {
+              let info = JSON.parse(body);
+              let weather = info.currently.temperature;
+              resolve(weather);
+            } else {
+              reject(err);
+            }
+          }
+        ).then(function(weather) {
+          console.log(`La temperatura es de ${weather} F°`);
+        }).catch(function(err) {
+          console.log(err);
+        })
+    });
+    var options = { method: 'GET',
+    url: 'https://api.openuv.io/api/v1/uv',
+    qs: { lat: `${lati}`, lng: `${lngi}`},
+    headers: 
+    { 'content-type': 'application/json',
+        'x-access-token': 'f9936e83b61fb156275253e5f276fc50' } }
+
+        request(options, function (error, response, body) {
+            p3 = new Promise(function (resolve, reject) {
+              if(body) {
+                let uv = JSON.parse(body);
+                resolve(uv);
+              } else {
+                reject(err);
+              }
+            }).then(function(uv) {
+              console.log(uv);
+            }).catch(function(err) {
+              console.log(err);
+            }) 
+          });
+    })
+}
+
+
+
+/*var rp = require('request-promise');
+
+rp("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&format=json") 
+  .then(data => {
+    let info = JSON.parse(data);
+    let lati = info[0].lat;
+    let lngi = info[0].lon;
+    console.log('Lat: ' + lati + '\n' + 'long: ' + lngi);
+    let weather = rp(`https://api.darksky.net/forecast/366bf5ba25d241ff04fb0c781f5c1c92/${lati},${lngi}`)
+    return weather;
+  }).then(weather => {
+    let info = JSON.parse(weather);
+  })*/
+
+
+/*var request = require('request');
+
+request("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&format=json", function (error, response, body) {
   //JSON para convertir body a un objeto
   let info = JSON.parse(body);
     //Para acceder a propiedad de object [property] || object.property
@@ -12,10 +85,10 @@ request(`https://api.darksky.net/forecast/366bf5ba25d241ff04fb0c781f5c1c92/${lat
  /* console.log('error:', error); // Print the error if one occurred
   console.log('statusCode:', response && response.statusCode); */// Print the response status code if a response was received
   //JSON para convertir body a un objeto
-  let info = JSON.parse(body);
+  //let info = JSON.parse(body);
     //Para acceder a propiedad de object [property] || object.property
     //info = (celsiusToFahrenheit(info.currently.temperature)).toFixed(4);
-  console.log(`La temperatura es de ${info.currently.temperature} F°`); // Print the HTML for the Google homepage.
+  /*console.log(`La temperatura es de ${info.currently.temperature} F°`); // Print the HTML for the Google homepage.
 });
     var options = { method: 'GET',
     url: 'https://api.openuv.io/api/v1/uv',
@@ -29,4 +102,4 @@ request(`https://api.darksky.net/forecast/366bf5ba25d241ff04fb0c781f5c1c92/${lat
             let uv = JSON.parse(body);
             console.log(uv);
           });
-});
+});*/
