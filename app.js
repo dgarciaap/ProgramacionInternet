@@ -56,6 +56,8 @@ request("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&fo
               console.log(err);
             }) 
           });
+    }).catch(function(err) { //catch del primer request
+      console.log(err);
     })
 })
 
