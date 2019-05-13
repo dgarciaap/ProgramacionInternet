@@ -4,10 +4,10 @@ request("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&fo
     p1 = new Promise(
     function(resolve, reject) {
       if(body) {
-        let info = JSON.parse(data);
+        let info = JSON.parse(body);
         let lati = info[0].lat;
         let lngi = info[0].lon;
-        resolve(lati,lngi);
+        resolve([lati,lngi]);
       } else {
         reject(err);
       }
@@ -32,7 +32,7 @@ request("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&fo
     });
     var options = { method: 'GET',
     url: 'https://api.openuv.io/api/v1/uv',
-    qs: { lat: `${lati}`, lng: `${lngi}`},
+    qs: { lat: `${coordenadas[0]}`, lng: `${coordenadas[1]}`},
     headers: 
     { 'content-type': 'application/json',
         'x-access-token': 'f9936e83b61fb156275253e5f276fc50' } }
@@ -52,7 +52,7 @@ request("https://us1.locationiq.com/v1/search.php?key=ea3e3eae4b14c1&q=Colima&fo
             }) 
           });
     })
-}
+})
 
 
 
