@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://test89:test89@ds251632.mlab.com:51632/addressbookaz', {useNewUrlParser: true});
+//Pueda recibir datos por body
+app.use(express.json());
+mongoose.connect('mongodb://test:Camv1998&@ds019756.mlab.com:19756/nosqltest', {useNewUrlParser: true});
 
 const Schema = mongoose.Schema;
 //Definir schema
@@ -28,10 +30,19 @@ diana.save(function(err) {
   console.log('person saved!');
 });
 
-//get all the users
-Person.find({}, function(err, users) {
-  if(err) throw err;
+//Environmente variables: global variables specific to the environment (server) our code is living in
+const port = process.env.PORT || 3000; //asigna el 3000 con || sólo si está disponible
 
-  //object of all the users
-  console.log(users);
+//ENDPOINT
+//agregar ruta de parametros
+app.get('/person/:name', function(req, res) {
+    let info = new Person({ //nueva instancia de esquema
+      firstname: req.params.name //obtener nombre por queryparams (lo que pones en la ruta: http://localhost:3000/person/diana) se graba diana 
+    })
+    info.save((err) => {
+      if(err) throw err;
+      res.json(info);
+    })
 });
+
+app.listen(port); //Create Server, http port
